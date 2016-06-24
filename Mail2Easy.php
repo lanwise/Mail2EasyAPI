@@ -107,7 +107,7 @@
 	    *	@param  string $method   o método de envio
 	    *	@return array
 	    */
-	    public function api($uri, $data = null, $method = 'GET')
+	    public function api($uri, $data = null, $method = 'POST')
 	    {
 	        $method = strtoupper($method);
 	        // Inicializa a biblioteca cURL
