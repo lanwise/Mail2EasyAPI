@@ -1,6 +1,5 @@
 <?php
-	App::import('Lib','src/config');
-
+	include_once('src/config.php');
 	/**
 	* 	Classe responsavel por permitir que o CakePHP 1.3
 	*	trabalhe com a API da Dinamize realizando a integração com o servico Mail2Easy
@@ -58,7 +57,7 @@
 	        $code = curl_getinfo($serviceHandler, CURLINFO_HTTP_CODE);
 
 	        // Se a requisição HTTP fio bem sucedida (código 200) 
-	        if($code != 200)
+	        if( $code != 200 )
 	        {
 	            throw new \Exception('Ocorreu um erro ao realizar a autenticação com o serviço de email "Mail2Easy".');
             }
@@ -67,12 +66,14 @@
         	$response = json_decode($response,true);
 
 	        // Armazena o Token e a URL que serão usados nas requisições subsequentes
-        	if ($response['code'] == '480001')  // CODIGO DE SUCESSO
+        	if ( $response['code'] == '480001' )  // CODIGO DE SUCESSO
         	{
 		        // Armazena o Token e a URL que serão usados nas requisições subsequentes
 		        $authToken = $response['body']['auth-token'];
         		$this->setAuthToken($authToken);
-		    } else {
+		    }
+		    else
+		    {
 		        // Erros retornados pela API
 		        throw new \Exception($response['code_detail']);
 		    }
@@ -94,7 +95,8 @@
 		*	@param string $authToken
 		*	@return Mail2Easy	
 	    */
-	    protected function setAuthToken($authToken){
+	    protected function setAuthToken($authToken)
+	    {
 	    	$this->authToken = $authToken;
 	    	return $this;
 	    }
@@ -117,14 +119,20 @@
 	        // Inicializa o(s) cabeçalho(s) HTTP. O cabeçalho "Dinamize-Auth" deve estar sempre presente
 	        $headers = array('Dinamize-Auth: ' . $this->getAuthToken());
 	        curl_setopt($serviceHandler, CURLOPT_RETURNTRANSFER, true);
-	        if ($method == 'POST') {
+	        if ( $method == 'POST' )
+	        {
 	            curl_setopt($serviceHandler, CURLOPT_POST, TRUE);
 	            curl_setopt($serviceHandler, CURLOPT_POSTFIELDS, $data);
-	        } else if ($method == 'GET') {
+	        }
+	        else if ($method == 'GET')
+	        {
 	            curl_setopt($serviceHandler, CURLOPT_HTTPGET, TRUE);
-	        } else {
-	            curl_setopt($serviceHandler, CURLOPT_CUSTOMREQUEST, $method);
-	            if (strtoupper($method) == 'PUT') {
+	        }
+	        else
+	        {
+	        	curl_setopt($serviceHandler, CURLOPT_CUSTOMREQUEST, $method);
+	        	if (strtoupper($method) == 'PUT')
+	            {
 	                // No caso de uma requisição PUT, um cabeçalho HTTP adicional é necessário
 	                $data = http_build_query($data);
 	                $headers[] = 'Content-Length: ' . strlen($data);
@@ -135,6 +143,6 @@
 	        curl_setopt($serviceHandler, CURLOPT_HTTPHEADER, $headers);
 	        // Retorna a resposta, já decodificada como objeto PHP.
 	        return json_decode(curl_exec($serviceHandler));
-    	}
+		}
 	}
 ?>

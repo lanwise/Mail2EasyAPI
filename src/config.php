@@ -29,7 +29,8 @@
 		*	@param string $login
 		*	@return Configuration
 		*/
-		protected function setLogin($login){
+		protected function setLogin($login)
+		{
 			$this->login = $login;
 			return $this;
 		}
@@ -39,7 +40,8 @@
 		*	@param string $password
 		*	@return Configuration
 		*/
-		protected function setPassword($password){
+		protected function setPassword($password)
+		{
 			$this->password = $password;
 			return $this;
 		}
