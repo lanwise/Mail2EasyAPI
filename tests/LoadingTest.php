@@ -1,26 +1,42 @@
 <?php 
-require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
+use PHPUnit_Framework_TestCase as PHPUnit;
 use Mail2Easy\Mail2Easy;
 use Mail2Easy\Configuration;
 
-class Mail2EasyTest extends PHPUnit_Framework_TestCase {
- 
-  public function testLoading()
-  {
-    $Mail2Easy = new Mail2Easy;
-	$this->assertTrue($Mail2Easy->test());
-  }
-  public function testInitialize()
-  {
-    $Mail2Easy = new Mail2Easy;
-	$this->assertTrue($Mail2Easy->initialize());
-  }
-  // public function test()
-  // {
+class Mail2EasyTest extends PHPUnit {
+    protected $Mail2Easy;
+    protected $Configuration;
+    
+    public function setUp(){
+        $this->Mail2Easy = new Mail2Easy();
+        $this->Configuration = new Configuration();
+    }
 
-  // 	$Configuration = new Configuration;
-  // 	echo $Configuration::test();
-  // }
- 
+    public function testGetLogin(){
+        $login = $this->Configuration->getLogin();
+        $this->assertEquals('login_aqui',$login);
+    }
+
+    public function testGetPassword(){
+        $password = $this->Configuration->getPassword();
+        $this->assertEquals('senha_aqui',$password);
+    }
+
+    //Test Case Classe Mail2Easy
+    public function testAuth()
+    {
+        try {
+            if( $this->Mail2Easy->auth($this->Configuration) ){
+                $erro = false;
+            }
+        } catch (Exception $e) {
+            $erro = true;
+        }
+        $this->assertFalse($erro);
+    }
+    public function tearDown(){
+        unset($this->Mail2Easy);
+        unset($this->Configuration);
+    } 
 }
 ?>

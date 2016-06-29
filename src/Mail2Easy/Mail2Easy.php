@@ -1,6 +1,7 @@
 <?php
 	namespace Mail2Easy;
-	use Mail2Easy\Configuration;
+	use Mail2Easy\Configuration as Configuration;
+
 	/**
 	* 	Classe responsavel por permitir que o CakePHP 1.3
 	*	trabalhe com a API da Dinamize realizando a integração com o servico Mail2Easy
@@ -32,11 +33,22 @@
 		*	@throws Exception
 		*/
 		//called before Controller::beforeFilter()
-	    public function initialize()
+	    public function __construct()
 	    {
-	        $user = new Configuration();
+	        $user = new Configuration;
+	        $this->auth($user);
+	        
+	    }
 
-	        $serviceHandler = curl_init();
+	    /**
+	    *	Autenticated
+	    *	Função responsavel por autenticar
+	    *	@author Charley Oliveira <charleycesar@gmail.com>
+	    *	@param $user Objeto da Classe de Configuração
+	    *	@return boolean
+	    */
+	    public function auth($user){
+	    	$serviceHandler = curl_init();
 	        // Cria um array de configuracoes de conexao
 	        $data = array("user"=>$user->getLogin(),"password"=>$user->getPassword());
 	        // Converte pra json
@@ -54,15 +66,14 @@
 	        
 	        // Status HTTP da resposta
 	        $code = curl_getinfo($serviceHandler, CURLINFO_HTTP_CODE);
-
-	        // Se a requisição HTTP fio bem sucedida (código 200) 
+	        // Se a requisição HTTP foi bem sucedida (código 200) 
 	        if( $code != 200 )
 	        {
 	            throw new \Exception('Ocorreu um erro ao realizar a autenticação com o serviço de email "Mail2Easy".');
             }
 
         	// Aplica a função da linguagem que converte uma string JSON para um array
-        	$response = json_decode($response,true);
+	        $response = json_decode($response,true);
 
 	        // Armazena o Token e a URL que serão usados nas requisições subsequentes
         	if ( $response['code'] == '480001' )  // CODIGO DE SUCESSO
@@ -70,10 +81,10 @@
 		        // Armazena o Token e a URL que serão usados nas requisições subsequentes
 		        $authToken = $response['body']['auth-token'];
         		$this->setAuthToken($authToken);
-		    }
+        	}
 		    else
 		    {
-		        // Erros retornados pela API
+		    	// Erros retornados pela API
 		        throw new \Exception($response['code_detail']);
 		    }
 	    }
@@ -143,14 +154,5 @@
 	        // Retorna a resposta, já decodificada como objeto PHP.
 	        return json_decode(curl_exec($serviceHandler));
 		}
-
-		/**
-	    *	Method para testar o autoload.php
-	    *	@return boolean
-	    */
-	    static function test()
-	    {
-	    	return true;
-	    }
 	}
 ?>

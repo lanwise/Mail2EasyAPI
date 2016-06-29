@@ -1,4 +1,5 @@
 <?php
+	namespace Mail2Easy;
 	/**
 	* 	Classe responsavel por configurar o usuario que vai usar o mail2easy
 	*
@@ -18,7 +19,7 @@
 		*/
 		protected $password;
 
-		private function __construct()
+		public function __construct()
 		{
 			$this->setLogin("login_aqui");
 			$this->setPassword("senha_aqui");			
@@ -63,5 +64,6 @@
 	    {
 	    	return $this->password;
 	    }
+
 	}
 ?>
