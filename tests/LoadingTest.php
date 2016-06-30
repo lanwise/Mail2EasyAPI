@@ -8,11 +8,7 @@ class Mail2EasyTest extends PHPUnit {
     protected $Configuration;
     
     public function setUp(){
-        try{
-            $this->Mail2Easy = new Mail2Easy();
-        }catch(Exception $e){
-            var_dump($e->getMessage());
-        }
+        $this->Mail2Easy = new Mail2Easy();
         $this->Configuration = new Configuration();
     }
 
@@ -27,19 +23,13 @@ class Mail2EasyTest extends PHPUnit {
     }
 
     // Test Case Classe Mail2Easy
-    /*public function testAuth()
+    public function testAuth()
     {
-        try {
-            if( $this->Mail2Easy->auth($this->Configuration) ){
-                $erro = false;
-            }
-        } catch (Exception $e) {
-            $erro = true;
-        }
+        $this->Mail2Easy->auth($this->Configuration);
         $this->assertFalse($erro);
-    }*/
+    }
     public function tearDown(){
-        //unset($this->Mail2Easy);
+        unset($this->Mail2Easy);
         unset($this->Configuration);
     } 
 }

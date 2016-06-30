@@ -48,15 +48,15 @@
 	    *	@return boolean
 	    */
 	    public function auth($user){
-	    	$serviceHandler = curl_init();
-	        // Cria um array de configuracoes de conexao
-	        $data = array("user"=>$user->getLogin(),"password"=>$user->getPassword());
+	    	// Cria um array de configuracoes de conexao
+	        $data = array('user'=>$user->getLogin(),'password'=>$user->getPassword(),'client_code'=>$user->getClientCode());
 	        // Converte pra json
 	        $data_string = json_encode($data); 
 
 	        // Prepara as opções para o processo de autenticação
+	    	$serviceHandler = curl_init();
 	        curl_setopt($serviceHandler, CURLOPT_URL, self::SERVICE_AUTH_URL);
-	        curl_setopt($serviceHandler, CURLOPT_HEADER,  array('Content-Type: application/json; charset=utf-8'));
+	        curl_setopt($serviceHandler, CURLOPT_HTTPHEADER,  array('Content-Type: application/json; charset=utf-8'));
 	        curl_setopt($serviceHandler, CURLOPT_POSTFIELDS, $data_string);
 	        curl_setopt($serviceHandler, CURLOPT_SSLVERSION, 1);
 	        curl_setopt($serviceHandler, CURLOPT_POST, TRUE);
@@ -69,10 +69,11 @@
 	        // Se a requisição HTTP foi bem sucedida (código 200) 
 	        if( $code != 200 )
 	        {
-	            throw new \Exception('Ocorreu um erro ao realizar a autenticação com o serviço de email "Mail2Easy".');
+	            throw new Exception('Ocorreu um erro ao realizar a autenticação com o serviço de email "Mail2Easy".');
             }
 
         	// Aplica a função da linguagem que converte uma string JSON para um array
+	        var_dump($response);
 	        $response = json_decode($response,true);
 
 	        // Armazena o Token e a URL que serão usados nas requisições subsequentes
@@ -85,7 +86,7 @@
 		    else
 		    {
 		    	// Erros retornados pela API
-		        throw new \Exception($response['code_detail']);
+		        throw new Exception($response['code_detail']);
 		    }
 	    }
 
