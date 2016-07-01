@@ -20,12 +20,12 @@
 		/**
 		*	URL utilizada para consumo da API do Mail2Easy
 		*/
-		const BASE_API_URL = 'https://api.dinamize.com/';
+		const BASE_API_URL = 'https://api.dinamize.com';
 
 		/**
 		*	@var string
 		*/
-		protected $authToken;
+		public $authToken;
 
 		/**
 		*	Initialize Mail2Easy 
@@ -73,7 +73,6 @@
             }
 
         	// Aplica a função da linguagem que converte uma string JSON para um array
-	        var_dump($response);
 	        $response = json_decode($response,true);
 
 	        // Armazena o Token e a URL que serão usados nas requisições subsequentes
@@ -82,11 +81,12 @@
 		        // Armazena o Token e a URL que serão usados nas requisições subsequentes
 		        $authToken = $response['body']['auth-token'];
         		$this->setAuthToken($authToken);
+        		return $response;
         	}
 		    else
 		    {
 		    	// Erros retornados pela API
-		        throw new Exception($response['code_detail']);
+		        throw new \Exception($response['code_detail']);
 		    }
 	    }
 
@@ -123,35 +123,30 @@
 	    public function api($uri, $data = null, $method = 'POST')
 	    {
 	        $method = strtoupper($method);
+	        $token = $this->getAuthToken();
+            $data = ($data) ? $data : '{}';
 	        // Inicializa a biblioteca cURL
 	        $serviceHandler = curl_init();
-	        curl_setopt($serviceHandler, CURLOPT_URL, $this->getServiceBaseUrl() . '/' . $uri);
-	        curl_setopt($serviceHandler, CURLOPT_HEADER, false);
-	        // Inicializa o(s) cabeçalho(s) HTTP. O cabeçalho "Dinamize-Auth" deve estar sempre presente
-	        $headers = array('Dinamize-Auth: ' . $this->getAuthToken());
-	        curl_setopt($serviceHandler, CURLOPT_RETURNTRANSFER, true);
 	        if ( $method == 'POST' )
-	        {
-	            curl_setopt($serviceHandler, CURLOPT_POST, TRUE);
-	            curl_setopt($serviceHandler, CURLOPT_POSTFIELDS, $data);
+	        {	
+	        	curl_setopt_array($serviceHandler, 
+	        		array(
+						CURLOPT_URL => self::BASE_API_URL . $uri,
+						CURLOPT_RETURNTRANSFER => true,
+						CURLOPT_ENCODING => "",
+						CURLOPT_MAXREDIRS => 10,
+						CURLOPT_TIMEOUT => 30,
+						CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+						CURLOPT_CUSTOMREQUEST => 'POST',
+						CURLOPT_POSTFIELDS => $data,
+						CURLOPT_HTTPHEADER => array(
+							"auth-token: $token",
+							"cache-control: no-cache",
+							"content-type: application/json; charset=utf-8"
+						)
+					)
+	        	);
 	        }
-	        else if ($method == 'GET')
-	        {
-	            curl_setopt($serviceHandler, CURLOPT_HTTPGET, TRUE);
-	        }
-	        else
-	        {
-	        	curl_setopt($serviceHandler, CURLOPT_CUSTOMREQUEST, $method);
-	        	if (strtoupper($method) == 'PUT')
-	            {
-	                // No caso de uma requisição PUT, um cabeçalho HTTP adicional é necessário
-	                $data = http_build_query($data);
-	                $headers[] = 'Content-Length: ' . strlen($data);
-	                curl_setopt($serviceHandler, CURLOPT_POSTFIELDS, $data);
-	            }
-	        }
-	        // Seta os cabeçalhos HTTP
-	        curl_setopt($serviceHandler, CURLOPT_HTTPHEADER, $headers);
 	        // Retorna a resposta, já decodificada como objeto PHP.
 	        return json_decode(curl_exec($serviceHandler));
 		}
