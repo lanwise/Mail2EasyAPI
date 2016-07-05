@@ -1,10 +1,9 @@
 {
     "name": "charley/mail2easy-api",
     "description": "Integração com a API do Mail2Easy da dinamize",
-    "version":"dev-master",
     "authors": [
         {
-            "name": "Charley",
+            "name": "Charley Oliveira",
             "email": "charleycesar@gmail.com"
         }
     ],
@@ -16,12 +15,6 @@
         "php":">=5.3.0",
         "charley/mail2easy-api":"dev-master"
     },
-    "repositories":[
-        {
-            "type":"vcs",
-            "url":"https://github.com/charleycesar/Mail2EasyAPI.git"
-        }
-    ],
     "require-dev":{
         "phpunit/phpunit":"4.0.*"
     },
