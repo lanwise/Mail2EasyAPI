@@ -7,7 +7,7 @@
             "email": "charleycesar@gmail.com"
         }
     ],
-    "minimum-stability": "dev-master",
+    "minimum-stability": "dev",
     "require": {
     	"php": ">=5.3.0",
         "charley/mail2easy-api":"*"
