@@ -1,6 +1,6 @@
 <?php
-	namespace Mail2Easy;
-	use Mail2Easy\Configuration as Configuration;
+	include 'Configuration.php';
+
 
 	/**
 	* 	Classe responsavel por permitir que o CakePHP 1.3
@@ -16,7 +16,7 @@
 		*	URL utilizada para autenticação da API do Mail2Easy
 		*/
 		const SERVICE_AUTH_URL = 'https://api.dinamize.com/auth';
-		
+
 		/**
 		*	URL utilizada para consumo da API do Mail2Easy
 		*/
@@ -28,7 +28,7 @@
 		public $authToken;
 
 		/**
-		*	Initialize Mail2Easy 
+		*	Initialize Mail2Easy
 		*	@param Controller $controller
 		*	@throws Exception
 		*/
@@ -37,7 +37,7 @@
 	    {
 	        $user = new Configuration;
 	        $this->auth($user);
-	        
+
 	    }
 
 	    /**
@@ -51,7 +51,7 @@
 	    	// Cria um array de configuracoes de conexao
 	        $data = array('user'=>$user->getLogin(),'password'=>$user->getPassword(),'client_code'=>$user->getClientCode());
 	        // Converte pra json
-	        $data_string = json_encode($data); 
+	        $data_string = json_encode($data);
 
 	        // Prepara as opções para o processo de autenticação
 	    	$serviceHandler = curl_init();
@@ -63,10 +63,10 @@
 	        curl_setopt($serviceHandler, CURLOPT_RETURNTRANSFER, TRUE);
 
 	        $response = curl_exec($serviceHandler);
-	        
+
 	        // Status HTTP da resposta
 	        $code = curl_getinfo($serviceHandler, CURLINFO_HTTP_CODE);
-	        // Se a requisição HTTP foi bem sucedida (código 200) 
+	        // Se a requisição HTTP foi bem sucedida (código 200)
 	        if( $code != 200 )
 	        {
 	            throw new Exception('Ocorreu um erro ao realizar a autenticação com o serviço de email "Mail2Easy".');
@@ -104,7 +104,7 @@
 		*	Set AuthToken
 		*
 		*	@param string $authToken
-		*	@return Mail2Easy	
+		*	@return Mail2Easy
 	    */
 	    protected function setAuthToken($authToken)
 	    {
@@ -122,14 +122,14 @@
 	    */
 	    public function api($uri, $data = null, $method = 'POST')
 	    {
-	        $method = strtoupper($method);
+			$method = strtoupper($method);
 	        $token = $this->getAuthToken();
-            $data = ($data) ? $data : '{}';
+			$data = ($data) ? $data : '{}';
 	        // Inicializa a biblioteca cURL
 	        $serviceHandler = curl_init();
 	        if ( $method == 'POST' )
-	        {	
-	        	curl_setopt_array($serviceHandler, 
+	        {
+	        	curl_setopt_array($serviceHandler,
 	        		array(
 						CURLOPT_URL => self::BASE_API_URL . $uri,
 						CURLOPT_RETURNTRANSFER => true,
